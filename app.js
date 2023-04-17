@@ -52,7 +52,7 @@ app.get("/", async(req, res)=> {
 app.get("/:customListName", async(req, res)=>{
   try{
   const customListName = _.capitalize(req.params.customListName);
-  const foundList = await List.findOne({name:customListName}); 
+  const foundList = await List.findOne({name:customListName});
   if (!foundList){
     const list = new List({
       name: customListName,
@@ -65,7 +65,7 @@ app.get("/:customListName", async(req, res)=>{
   }
   } catch(err){
     console.log(err);
-  } 
+  }
 });
 
 app.post("/", async(req, res)=>{
@@ -78,7 +78,7 @@ app.post("/", async(req, res)=>{
   });
   if(listName === "Today"){
   item.save();
-  res.redirect("/");  
+  res.redirect("/");
   } else{
     foundList.items.push(item);
     foundList.save();
@@ -100,13 +100,14 @@ app.post("/delete", async (req, res) => {
       Item.findByIdAndRemove({_id: checkedItemId}). exec();
       res.redirect("/");
      } else{
-      List.findOneAndUpdate({name: listName},{$pull: {items: {_id: checkedItemId}}});
-      if(!err){
-        res.redirect("/" + listName);
-      };
+      List.findOneAndUpdate({name: listName},{$pull: {items: {_id: checkedItemId}}})
+      .then((foundList) => { 
+          res.redirect("/" + listName);
+      });
+      
       
      };
-    
+
   } catch(err) {
     console.log(err);
   }
